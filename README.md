@@ -10,7 +10,7 @@ These activities assume the reader has basic understanding of R and command line
 
 This session will be broken into the following components:
 
-1.  [Overview of genotype likelihood data](./Part1_genotype-likelihood-data.md)
+1.  [Working with genotype likelihood data](./test.md)
 
 2.  
 
