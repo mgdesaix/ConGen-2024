@@ -275,14 +275,20 @@ chmod +x ./data/cut-beagle-ind.awk
 
 Using the balanced western IDs file we created above, we can then subset
 the full Beagle file. The code below cuts the first column from the
-`*.wgsassign.ids.txt` to input the individuals we want to the script,
-followed by providing the Beagle file (and de-compressing it)
+`balanced.western.wgsassign.ids.txt` to input the individuals we want to
+the script, followed by providing the Beagle file (and de-compressing
+it)
 
 ``` sh
 ./scripts/cut-beagle-ind.awk <(cut -f1 ./data/balanced.western.wgsassign.ids.txt) \
 <(zcat < ./data/amre.western.beagle.gz) | \
 gzip > ./data/balanced.western.beagle.gz
 ```
+
+Check the header of your new Beagle file, does it look proper? It
+should! Note that the individuals are now arranged in the header in the
+same order as they are in the `balanced.western.wgsassign.ids.txt` file
+you used to cut them with the `awk` script.
 
 Now we can perform the LOO assignment with the new Beagle file and using
 the `balanced.western.wgsassign.ids.txt` specifying the individuals.
@@ -399,6 +405,71 @@ upwardly bias the results when including the individual’s genotype
 likelihood in the allele frequency calculation…and this is why we use
 leave-one-out cross-validation for determining our assignment accuracy!
 But, the standard assignment is precisely what we can use for any
-individuals that are not part of the reference allele frequencies.
+individuals that are *not* part of the reference allele frequencies.
 
-## Break-out session assignment (20 min.)
+## Break-out session (20 min.)
+
+For the first break-out session we’ll put together all of these topics
+to assess assignment accuracy with the American Redstarts of the West
+data set. In groups, you will
+
+1.  select individuals from the Basin Rockies and Western Boreal
+    populations that will result balanced effective sample sizes between
+    the two populations, we’ll call these the “LOO reference”
+    individuals
+
+2.  Write a new `*.wgsassign.ids.txt` file for these individuals and use
+    the `cut-beagle-ind.awk` script to create a new Beagle file of your
+    “LOO reference” individuals.
+
+3.  Perform LOO assignment in WGSassign on the new “LOO reference”
+    Beagle file and calculate the effective sample sizes
+
+4.  Write another `*.wgsassign.ids.txt` file for all the individuals
+    *not* part of the “LOO reference” group, we’ll call these
+    individuals the “Test” group. Create a new Beagle file for the
+    “Test” group.
+
+5.  Perform standard assignment in WGSassign on the “Test” group, using
+    the `LOO reference` population allele frequencies.
+
+6.  Summarize the assignment accuracy of the LOO reference and test
+    individuals in R; report the effective sample sizes of the two
+    populations; and provide an explanation of how you chose individuals
+    to remove in order to balance the effective sample sizes.
+
+7.  Bonus: If you finish early, play around with the data. How small of
+    balanced effective sample sizes can you have in the reference
+    population to still get accurate assignment? If you cut the Beagle
+    file to 10k SNPs do you still get accurate assignment?
+
+The files you’ll need for this are:
+
+- `amre.western.beagle.gz`
+- `amre.western.wgsassign.ids.txt`
+- `full.amre.beagle.meta.csv`
+
+The first two files we have already worked with. The new “meta data”
+file provides sampling site names (column = `Site`) for the individuals.
+
+The purpose of this file is that the samples we have in our small data
+set are from multiple sampling sites within the populations - when
+balancing out the reference populations it may be best to select
+individuals from the different sampling sites. It’s a CSV file with a
+header so can be read in to R with `read_csv`. The meta data file also
+contains individuals that are not part of our Western group subset, so
+I’d read it in and use a join with the Western IDs file we were using in
+R:
+
+``` r
+full.meta <- read_csv("./data/full.amre.beagle.meta.csv")
+
+western.ids.meta <- western.ids %>%
+  left_join(full.meta, by = "Sample")
+```
+
+We’ll reconvene shortly and discuss these results as a group!
+
+------------------------------------------------------------------------
+
+Now onto the next section
