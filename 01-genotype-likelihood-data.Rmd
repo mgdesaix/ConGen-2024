@@ -9,8 +9,11 @@ One aspect that is different when working with low-coverage data is the file typ
 
 ## What is a Beagle file?
 
-![Sadly, not the beagles we're talking about](./images/beagle_puppy_small.jpg){width=300}
+```{r beagle, fig.align = 'left', out.width = "50%", fig.cap = "Sadly, not the beagles we're talking about", echo = FALSE}
+knitr::include_graphics(here::here("images", "beagle_puppy_small.jpg"))
+```
 
+************************************
 
 Beagle files provide genotype likelihoods for each marker (row) and individual (columns). The layout is as follows:
 

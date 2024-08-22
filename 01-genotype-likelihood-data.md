@@ -17,12 +17,16 @@ ANGSD.
 
 ## What is a Beagle file?
 
-<figure>
-<img src="./images/beagle_puppy_small.jpg" width="300"
-alt="Sadly, not the beagles we’re talking about" />
-<figcaption aria-hidden="true">Sadly, not the beagles we’re talking
-about</figcaption>
-</figure>
+<div class="figure" style="text-align: left">
+
+<img src="images/beagle_puppy_small.jpg" alt="Sadly, not the beagles we're talking about" width="50%" />
+<p class="caption">
+Sadly, not the beagles we’re talking about
+</p>
+
+</div>
+
+------------------------------------------------------------------------
 
 Beagle files provide genotype likelihoods for each marker (row) and
 individual (columns). The layout is as follows:
