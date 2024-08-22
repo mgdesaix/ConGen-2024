@@ -12,7 +12,7 @@ This session will be broken into the following components:
 
 1.  [Working with genotype likelihood data](./01-genotype-likelihood-data.md)
 
-2.  
+2.  [WGSassign basics](./02-wgsassign-basics.md)
 
 
 ## Related resources

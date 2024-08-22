@@ -115,8 +115,7 @@ file?
 
 ------------------------------------------------------------------------
 
-Now on to the next section: [Performing population assignment with
-WGSassign](./02-wgsassign-basics.md)
+Now on to the next section: [WGSassign basics](./02-wgsassign-basics.md)
 
 ### Related resources
 

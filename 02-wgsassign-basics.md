@@ -1,4 +1,4 @@
-Population assignment with WGSassign
+WGSassign basics
 ================
 Matt DeSaix
 2024-08-21
