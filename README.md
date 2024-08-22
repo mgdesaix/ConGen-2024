@@ -4,7 +4,7 @@ This is a walk-through of performing population assignment with genotype likelih
 
 ## Pre-reqs
 
-These activities assume the reader has basic understanding of R and command line coding, as well as access to a Linux system for running WGSassign (Note: If you are using the ConGen RStudio server, it already has WGSassign installed! Thanks IT!).
+These activities assume the reader has an understanding of R (and tidyverse!) and command line coding, as well as access to a Linux system for running WGSassign (Note: If you are using the ConGen RStudio server, it already has WGSassign installed! Thanks IT!). Many of the files are also provided in the repository to run through the R code.
 
 ## Overview of activities
 

@@ -13,7 +13,7 @@ Let's start using `WGSassign` with a subset of American Redstart data (a Neotrop
 
 The two files described above are the only files needed to initially perform leave-one-out cross-validation assignment and calculate the effective sample sizes (of the populations and individuals). **Importantly, the ID text file for WGSassign must have individuals in the same order as in the Beagle file!**
 
-Let's run our first command in `WGSassign`. We'll load a Conda environment (provided with the installation of WGSassign containing the dependencies) and create an out directory. We'll specify options below to calculate reference allele frequencies (`--get_reference_af`), calculate effective sample sizes (`--ne_obs`), and perform leave-one-out cross-validation (`--loo`):
+Let's run our first command in `WGSassign` from the Terminal. We'll load a Conda environment (provided with the installation of WGSassign containing the dependencies) and create an out directory. We'll specify options below to calculate reference allele frequencies (`--get_reference_af`), calculate effective sample sizes (`--ne_obs`), and perform leave-one-out cross-validation (`--loo`):
 
 ```sh
 conda activate WGSassign
@@ -27,24 +27,26 @@ out=${outdir}/amre.western.reference
 WGSassign --beagle ${beagle} --pop_af_IDs ${popIDs} --get_reference_af --ne_obs --loo --out ${out}
 ```
 
-```
-WGSassign
-Matt DeSaix.
-Using 1 thread(s).
+which outputs to screen:
 
-Parsing Beagle file.
-Loaded 99999 sites and 47 individuals.
-Parsing reference population ID file.
-EM (MAF) converged at iteration: 11
-EM (MAF) converged at iteration: 14
-Saved reference population allele frequencies as ./out/western/amre.western.reference.pop_af.npy (Binary - np.float32)
-
-Column order of populations is: ['BR' 'WB']
-Saved reference population names as ./out/western/amre.western.reference.pop_names.txt (String: Order of pops for .pop_af.npy, .ne_obs.npy, and fisher_obs.npy files)
+```sh
+## WGSassign
+## Matt DeSaix.
+## Using 1 thread(s).
+## 
+## Parsing Beagle file.
+## Loaded 99999 sites and 47 individuals.
+## Parsing reference population ID file.
+## EM (MAF) converged at iteration: 11
+## EM (MAF) converged at iteration: 14
+## Saved reference population allele frequencies as ./out/western/amre.western.reference.pop_af.npy (Binary - np.float32)
+## 
+## Column order of populations is: ['BR' 'WB']
+## Saved reference population names as ./out/western/amre.western.reference.pop_names.txt (String: Order of pops for .pop_af.npy, .ne_obs.npy, and fisher_obs.npy files)
 ...
 ```
 
-The output is verbose and provides some handy information - such as checking there's the expected number of sites and individuals in the file you provide. The `EM (MAF) converged at iteration` note comes up each time the population allele frequency (minor) is calculated. It occurs twice at the beginning (one for each pop) and also occurs during LOO as the allele frequency for a given population has to be recalculated without the individual that is being assigned...in our example, this occured 47 times. This is the slowest step, but fortunately this is fast in `WGSassign` and can be sped up by increasing the number of threads used for parallelization (using the `--threads` argument). 
+The output is verbose and provides some handy information - such as checking there's the expected number of sites and individuals in the file you provide. The `EM (MAF) converged at iteration` note comes up each time the population allele frequency (minor) is calculated. It occurs twice at the beginning (one for each pop) and also occurs during LOO as the allele frequency for a given population has to be recalculated without the individual that is being assigned...in our example, this occurred 47 times. This is the slowest step, but fortunately this is fast in `WGSassign` and can be sped up by increasing the number of threads used for parallelization (using the `--threads` argument). 
 
 Let's switch into R and look at the file with the log likelihoods of assignment (`*.pop_like_LOO.txt`):
 
@@ -115,6 +117,8 @@ Well, mixed success. All individuals from Basin Rockies are accurately assigned 
 
 Let's take a look at the effective sample sizes of these populations
 
+### Evaluating effective sample size
+
 ```{r, message=FALSE, warning=FALSE}
 western.ess <- read_table2("./out/western/amre.western.reference.ne_obs.txt")
 ```
@@ -127,22 +131,89 @@ western.ess
 knitr::kable(western.ess)
 ```
 
-Basin Rockies has a notably higher effective sample size than Western Boreal and this may be the root of the problem. 
+Basin Rockies has a notably higher effective sample size than Western Boreal and this may be the root of the problem - unbalanced sequencing depths and number of individuals between our populations. What can we do about this? Well, the population effective sample is determined by the sum of each individual's effective sample size in that population, and this individual-level effective sample size is also output by `WGSassign`. Let's take a look in R:
 
+```{r, warning = FALSE, message = FALSE}
+western.ess.ind <- western.ids %>% 
+  cbind(read_table2("./out/western/amre.western.reference.ne_ind.txt",
+                    col_names = "ess"))
+```
 
+```r
+head(western.ess.ind)
+```
 
+```{r, echo = FALSE}
+knitr::kable(head(western.ess.ind))
+```
 
+Let's see if there's any variation in individual effective sample between the populations - this would occur if there's differences in sequencing depth, which could arise from differences in sample types, sample age, etc.
+
+```{r}
+western.ess.ind.summary <- western.ess.ind %>%
+  group_by(Breeding_pop) %>%
+  summarize(N = n(),
+            Mean_ess = mean(ess), # get mean effective sample size by group
+            Max_ess = max(ess),
+            Min_ess = min(ess))
+```
+
+```r
+western.ess.ind.summary
+```
+
+```{r, echo = FALSE}
+knitr::kable(western.ess.ind.summary)
+```
+
+The table above shows us that there are more individuals in the Basin Rockies group than Western Boreal (27 vs. 20), but also that Basin Rockies individuals tend to have higher effective sample sizes. What we want to do then is to remove individuals from the Basin Rockies population to get the population-level effective sample sizes more equal between the two, and then re-perform LOO assignment to evaluate accuracy. To do that, we need to identify the individuals we want to keep as part of the reference group for LOO, cut the Beagle file to those individuals and re-run WGSassign on the new Beagle file.
+
+To do that, let's say we want to use 20 individuals per population. We can take our IDs file and subset it to that number of individuals:
+
+```{r}
+balanced.western.ids <- western.ids %>%
+  group_by(Breeding_pop) %>%
+  slice_head(n = 20) # cut to 20 individuals per group
+```
+
+We can now write this file out in the `WGSassign` format of the reference population ID file (i.e. tab-delimited, no header, first column = individual ID, second column = population ID)
+
+```r
+write_delim(balanced.western.ids, "./data/balanced.western.wgsassign.ids.txt", delim = "\t", col_names = FALSE)
+```
+
+Next we need to subset the Beagle file to these individuals. I provide a Bash script that uses `awk` to do this (`cut-beagle-ind.awk` in the scripts directory) - it takes as input:
+
+1.  single column file of individual IDs to be kept
+2.  *unzipped* Beagle file
+
+You made need to give yourself executable authorization for the script, which can be run on the Terminal:
+
+```sh
+chmod +x ./data/cut-beagle-ind.awk
+```
+
+Using the balanced western IDs file we created above, we can then subset the full Beagle file. The code below cuts the first column from the `*.wgsassign.ids.txt` to input the individuals we want to the script, followed by providing the Beagle file (and de-compressing it)
+
+```sh
+./scripts/cut-beagle-ind.awk <(cut -f1 ./data/balanced.western.wgsassign.ids.txt) \
+<(zcat < ./data/amre.western.beagle.gz) | \
+gzip > ./data/balanced.western.beagle.gz
+```
+
+Now we can perform the LOO assignment with the new Beagle file and using the `balanced.western.wgsassign.ids.txt` specifying the individuals. That will be part of the break-out session and before we get to that, let's go over how to perform standard assignment in WGSassign.
 
 
 
 ### Standard Assignment
 
-The "standard" assignment test in `WGSassign` takes a Beagle file of individuals and population allele frequencies of the populations in question. Notably, it is assumed that the individuals in the Beagle file were not used in the allele frequency calculations, in order to avoid assignment bias...i.e. increased assignment accuracy will be perceived when an individual's genotype (likelihood) is included in the population it is being assigned to. 
+The "standard" assignment test in `WGSassign` performs assignment on a Beagle file of individuals to a separate file of population allele frequencies. Notably, it is assumed that the individuals in the Beagle file were not used in the allele frequency calculations, in order to avoid assignment bias...i.e. increased assignment accuracy will be perceived when an individual's genotype (likelihood) is included in the population it is being assigned to. 
 
-Let's look at this. Using the reference population allele frequencies for these American Redstarts of the West, let's determine the assignment accuracy of these reference individuals with the standard test. Below we'll specify the Beagle file (same as before) and the allele frequency file (created previously), along with the `--get_pop_like` argument to get the likelihood of assignment from the standard assignment (in contrast to `--loo` which we used before).
+Let's look at this. Using the reference population allele frequencies for the American Redstarts of the West that we created from our initial run of WGSassign, let's determine the assignment accuracy of these reference individuals with the standard test. Below we'll specify the Beagle file (same as before) and the allele frequency file (created previously), along with the `--get_pop_like` argument to get the likelihood of assignment from the standard assignment (in contrast to `--loo` which we used before). We'll change the output name to the prefix of `amre.western.assign.*` to avoid confusion with our other files.
 
 ********************
-Note: the allele frequencies are produced in a Numpy file. This is from Python (which WGSassign is coded in) as a fast and easy to load file for the calculations but if you want to look at it in your terminal you will need to use Python. We won't be getting into that here.
+Note: the allele frequencies are produced in a Numpy file (`*.npy`). This is from Python (which WGSassign is coded in) as a fast and easy to load file for the calculations but if you want to look at it in your terminal you will need to use Python. We won't be getting into that here.
+
 ********************
 
 ```sh
@@ -155,17 +226,17 @@ out=${outdir}/amre.western.assign
 WGSassign --beagle ${beagle} --pop_af_file ${af} --get_pop_like --out ${out}
 ```
 
-```
-WGSassign
-Matt DeSaix.
-Using 1 thread(s).
-
-Parsing Beagle file.
-Loaded 99999 sites and 47 individuals.
-Parsing population allele frequency file.
-Calculating likelihood of population assignment
-47 individuals to assign to 2 populations
-Saved population assignment log likelihoods as ./out/western/amre.western.assign.pop_like.txt (text)
+```sh
+## WGSassign
+## Matt DeSaix.
+## Using 1 thread(s).
+##
+## Parsing Beagle file.
+## Loaded 99999 sites and 47 individuals.
+## Parsing population allele frequency file.
+## Calculating likelihood of population assignment
+## 47 individuals to assign to 2 populations
+## Saved population assignment log likelihoods as ./out/western/amre.western.assign.pop_like.txt (text)
 ```
 
 Super fast not having to recalculate allele frequencies for assigning each individual! Why don't we do this all the time for assessing reference population assignment?? Let's see...
@@ -210,5 +281,12 @@ western.assign.summary
 knitr::kable(western.assign.summary)
 ```
 
-Wow, 100% accuracy for both pops! In contrast, we had much lower assignment accuracy before for the Western Boreal group. Clearly, we upwardly bias the results when including the individual's genotype likelihood in the allele frequency calculation...and this is why we use leave-one-out cross-validation for determining our assignment accuracy!
+Wow, 100% accuracy for both pops! In contrast, we had much lower assignment accuracy before for the Western Boreal group. Clearly, we upwardly bias the results when including the individual's genotype likelihood in the allele frequency calculation...and this is why we use leave-one-out cross-validation for determining our assignment accuracy! But, the standard assignment is precisely what we can use for any individuals that are not part of the reference allele frequencies.
+
+## Break-out session assignment (20 min.)
+
+
+
+
+
 
