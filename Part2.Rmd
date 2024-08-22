@@ -1,0 +1,6 @@
+---
+title: "Part 2) Population assignment with WGSassign"
+author: "Matt DeSaix"
+date: "2024-08-21"
+output: rmarkdown::github_document
+---
