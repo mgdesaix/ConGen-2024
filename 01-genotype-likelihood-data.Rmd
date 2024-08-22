@@ -9,7 +9,8 @@ One aspect that is different when working with low-coverage data is the file typ
 
 ## What is a Beagle file?
 
-![Sadly, not the beagles we're talking about](./images/beagle_puppy_small.jpg){#id .class width=300}
+![Sadly, not the beagles we're talking about](./images/beagle_puppy_small.jpg){width=300}
+
 
 Beagle files provide genotype likelihoods for each marker (row) and individual (columns). The layout is as follows:
 

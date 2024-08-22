@@ -17,8 +17,8 @@ ANGSD.
 
 ## What is a Beagle file?
 
-<figure id="id">
-<img src="./images/beagle_puppy_small.jpg" class="class" width="300"
+<figure>
+<img src="./images/beagle_puppy_small.jpg" width="300"
 alt="Sadly, not the beagles we’re talking about" />
 <figcaption aria-hidden="true">Sadly, not the beagles we’re talking
 about</figcaption>
