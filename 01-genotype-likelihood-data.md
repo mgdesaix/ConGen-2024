@@ -17,6 +17,13 @@ ANGSD.
 
 ## What is a Beagle file?
 
+<figure id="id">
+<img src="./images/beagle_puppy_small.jpg" class="class" width="300"
+alt="Sadly, not the beagles we’re talking about" />
+<figcaption aria-hidden="true">Sadly, not the beagles we’re talking
+about</figcaption>
+</figure>
+
 Beagle files provide genotype likelihoods for each marker (row) and
 individual (columns). The layout is as follows:
 
@@ -92,17 +99,17 @@ Also, because Beagle files are large they are typically gzipped. Let’s
 check out another Beagle file in the `./data/` directory
 
 ``` sh
-# zcat ./data/amre.western.mini.beagle.gz | wc -l
+# zcat ./data/amre.western.beagle.gz | wc -l
 # Macs don't 'zcat' the same as on Linux, on a Mac I use the command below
-zcat < ./data/amre.western.mini.beagle.gz | wc -l
+zcat < ./data/amre.western.beagle.gz | wc -l
 ```
 
     ##   100000
 
 ------------------------------------------------------------------------
 
-*Question 1.2:* How many markers are in the
-`amre.western.mini.beagle.gz` file?
+*Question 1.2:* How many markers are in the `amre.western.beagle.gz`
+file?
 
 *Bonus Question 1.3:* How many individuals are in the file?
 

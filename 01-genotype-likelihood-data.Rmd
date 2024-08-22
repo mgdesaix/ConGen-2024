@@ -9,6 +9,8 @@ One aspect that is different when working with low-coverage data is the file typ
 
 ## What is a Beagle file?
 
+![Sadly, not the beagles we're talking about](./images/beagle_puppy_small.jpg){#id .class width=300}
+
 Beagle files provide genotype likelihoods for each marker (row) and individual (columns). The layout is as follows:
 
 -  Column 1 (marker) = chromosome and position
@@ -53,15 +55,15 @@ Beagle files are typically very large and cumbersome to work with, and as far as
 Also, because Beagle files are large they are typically gzipped. Let's check out another Beagle file in the `./data/` directory
 
 ```{sh}
-# zcat ./data/amre.western.mini.beagle.gz | wc -l
+# zcat ./data/amre.western.beagle.gz | wc -l
 # Macs don't 'zcat' the same as on Linux, on a Mac I use the command below
-zcat < ./data/amre.western.mini.beagle.gz | wc -l
+zcat < ./data/amre.western.beagle.gz | wc -l
 ```
 
 
 ************************************
 
-*Question 1.2:* How many markers are in the `amre.western.mini.beagle.gz` file? 
+*Question 1.2:* How many markers are in the `amre.western.beagle.gz` file? 
 
 *Bonus Question 1.3:* How many individuals are in the file?
 
