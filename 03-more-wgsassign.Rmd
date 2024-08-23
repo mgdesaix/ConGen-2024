@@ -16,9 +16,9 @@ In the previous section, we looked at the posterior probabilities of assignment 
 
 We'll try this out with a new data set of American Redstarts from the eastern portion of the breeding range (`./data/eastern`). In this data set we have three populations: MP = Maritime Provinces, NT = Northern Temperate, ST = Southern Temperate. Again, details on the population structure can be found in <https://doi.org/10.1111/mec.17137>. I provide a script (`./data/scripts/partition-k-beagle.sh`) which creates $k$ new beagles based on the following arguments: 
 
-`-k`  Number of equal-sized partitions to make
-`-b`  Input Beagle file
-`-o`  Prefix of the output $k$ number of Beagle files
+-  `-k`  Number of equal-sized partitions to make
+-  `-b`  Input Beagle file
+-  `-o`  Prefix of the output $k$ number of Beagle files
 
 We'll create 5 subsets with the following code:
 
@@ -198,9 +198,15 @@ eastern.k.conf2 <- eastern.k.consistency.max %>%
   pivot_wider(names_from = AssignedPop, values_from = N) %>%
   mutate(across(where(is.numeric), ~replace_na(.x, 0))) %>%
   select(Breeding_pop, MP, NT, ST, Uncertain)
+```
+
+```r
 eastern.k.conf2
 ```
 
+```{r, echo = FALSE}
+knitr::kable(eastern.k.conf2)
+```
 
 
 # Break-out session (30 min.)
@@ -211,12 +217,12 @@ For this second break-out session, you'll work together in groups to evaluate as
 
 2.  Determine the eastern breeding populations of origin of nonbreeding sampled individuals with the standard assignment test in `WGSassign`. Characterize the assignment of the nonbreeding individuals with assignment consistency as well (i.e. partition the nonbreeding individuals genome into $k$ partitions and do $k$ assignments). Summarize the migratory assignments by nonbreeding site, which are coded by country in the 2nd column of the `./data/amre.nonbreeding.ids.sites.txt` file:
 
-CO = Colombia
-CR1 = Costa Rica site 1
-CR2 = Costa Rica site 2
-CU1 = Cuba
-JM1 = Jamaica
-TR = Trinidad and Tobago
+-  CO = Colombia
+-  CR1 = Costa Rica site 1
+-  CR2 = Costa Rica site 2
+-  CU1 = Cuba
+-  JM1 = Jamaica
+-  TR = Trinidad and Tobago
 
 The files you'll need for this are:
 

@@ -263,8 +263,9 @@ Bash script that uses `awk` to do this (`subset-beagle-ind.sh` in the
 `./data/scripts/` directory) - it takes as input the following required
 arguments
 
-`-i` single column file of individual IDs to be kept `-b` Beagle file
-`-o` outname of new Beagle file
+- `-i` single column file of individual IDs to be kept
+- `-b` Beagle file
+- `-o` outname of new Beagle file
 
 ------------------------------------------------------------------------
 

@@ -28,8 +28,9 @@ structure can be found in <https://doi.org/10.1111/mec.17137>. I provide
 a script (`./data/scripts/partition-k-beagle.sh`) which creates $k$ new
 beagles based on the following arguments:
 
-`-k` Number of equal-sized partitions to make `-b` Input Beagle file
-`-o` Prefix of the output $k$ number of Beagle files
+- `-k` Number of equal-sized partitions to make
+- `-b` Input Beagle file
+- `-o` Prefix of the output $k$ number of Beagle files
 
 We’ll create 5 subsets with the following code:
 
@@ -239,15 +240,17 @@ eastern.k.conf2 <- eastern.k.consistency.max %>%
   pivot_wider(names_from = AssignedPop, values_from = N) %>%
   mutate(across(where(is.numeric), ~replace_na(.x, 0))) %>%
   select(Breeding_pop, MP, NT, ST, Uncertain)
+```
+
+``` r
 eastern.k.conf2
 ```
 
-    ## # A tibble: 3 × 5
-    ##   Breeding_pop    MP    NT    ST Uncertain
-    ##   <chr>        <int> <int> <int>     <int>
-    ## 1 MP              10     1     0        17
-    ## 2 NT               0    29     1         9
-    ## 3 ST               0     1    44         2
+| Breeding_pop |  MP |  NT |  ST | Uncertain |
+|:-------------|----:|----:|----:|----------:|
+| MP           |  10 |   1 |   0 |        17 |
+| NT           |   0 |  29 |   1 |         9 |
+| ST           |   0 |   1 |  44 |         2 |
 
 # Break-out session (30 min.)
 
@@ -278,8 +281,12 @@ their populations of origin (i.e. their migratory connection)
     site, which are coded by country in the 2nd column of the
     `./data/amre.nonbreeding.ids.sites.txt` file:
 
-CO = Colombia CR1 = Costa Rica site 1 CR2 = Costa Rica site 2 CU1 = Cuba
-JM1 = Jamaica TR = Trinidad and Tobago
+- CO = Colombia
+- CR1 = Costa Rica site 1
+- CR2 = Costa Rica site 2
+- CU1 = Cuba
+- JM1 = Jamaica
+- TR = Trinidad and Tobago
 
 The files you’ll need for this are:
 

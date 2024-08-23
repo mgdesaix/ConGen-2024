@@ -183,9 +183,9 @@ write_delim(balanced.western.ids, "./data/western/balanced.western.wgsassign.ids
 
 Next we need to subset the Beagle file to these individuals. I provide a Bash script that uses `awk` to do this (`subset-beagle-ind.sh` in the `./data/scripts/` directory) - it takes as input the following required arguments
 
-`-i`  single column file of individual IDs to be kept
-`-b`  Beagle file
-`-o`  outname of new Beagle file
+-  `-i`  single column file of individual IDs to be kept
+-  `-b`  Beagle file
+-  `-o`  outname of new Beagle file
 
 ********************
 
