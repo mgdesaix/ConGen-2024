@@ -14,7 +14,7 @@ This session will be broken into the following components:
 
 2.  [WGSassign basics: 02-wgsassign-basics.md](./02-wgsassign-basics.md)
 
-3.
+3.  [Full WGSassign workflow: 03-more-WGSassign.md](./03-more-WGSassign.md)
 
 
 ## Related resources

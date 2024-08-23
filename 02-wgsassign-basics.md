@@ -147,7 +147,6 @@ and determine the accuracy of assignment back to their known population
 ``` r
 western.loo.summary <- western.loo.probs %>%
   filter(AssignedLike == max(AssignedLike)) %>% # keep only the maximum likelihood
-  ungroup() %>%
   mutate(Correct = ifelse(Breeding_pop == AssignedPop, 1, 0)) %>% # create binary column of correct assignment
   group_by(Breeding_pop) %>%
   summarize(Accuracy = sum(Correct)/n()) # summarize accuracy by population
@@ -492,4 +491,6 @@ We’ll reconvene shortly and discuss these results as a group!
 
 ------------------------------------------------------------------------
 
-Now onto the next section
+These wraps up the basics of evaluating assignment accuracy with known
+source individuals, now onto the next section [Full WGSassign workflow:
+03-more-WGSassign.md](./03-more-WGSassign.md)
