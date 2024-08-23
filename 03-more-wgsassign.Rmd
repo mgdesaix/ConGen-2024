@@ -234,11 +234,10 @@ The files you'll need for this are:
 -  `./data/scripts/partition-k-beagle.sh`
 -  `./data/full.amre.beagle.meta.csv`
 
-```
 
 We'll reconvene shortly and discuss these results as a group!
 
 ********************
 
-These wraps up the session!
+This wraps up the session!
 
