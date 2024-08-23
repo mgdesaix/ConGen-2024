@@ -340,7 +340,7 @@ We'll reconvene shortly and discuss these results as a group!
 
 ********************
 
-These wraps up the basics of evaluating assignment accuracy with known source individuals, now onto the next section [Full WGSassign workflow: 03-more-WGSassign.md](./03-more-WGSassign.md)
+These wraps up the basics of evaluating assignment accuracy with known source individuals, now onto the next section [Full WGSassign workflow: 03-more-wgsassign.md](./03-more-wgsassign.md)
 
 
 
