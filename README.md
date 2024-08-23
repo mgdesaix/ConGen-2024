@@ -4,15 +4,17 @@ This is a walk-through of performing population assignment with genotype likelih
 
 ## Pre-reqs
 
-These activities assume the reader has an understanding of R (and tidyverse!) and command line coding, as well as access to a Linux system for running WGSassign (Note: If you are using the ConGen RStudio server, it already has WGSassign installed! Thanks IT!). Many of the files are also provided in the repository to run through the R code.
+These activities assume the reader has an understanding of R (and tidyverse!) and command line coding, as well as access to a Linux system for running WGSassign (Note: If you are using the ConGen RStudio server, it already has WGSassign installed to a Conda environment (`conda activate WGSassign`)! Thanks IT!). Many of the files are also provided in the repository to run through the R code.
 
 ## Overview of activities
 
 This session will be broken into the following components:
 
-1.  [Working with genotype likelihood data](./01-genotype-likelihood-data.md)
+1.  [Working with genotype likelihood data: 01-genotype-likelihood-data.md](./01-genotype-likelihood-data.md)
 
-2.  [WGSassign basics](./02-wgsassign-basics.md)
+2.  [WGSassign basics: 02-wgsassign-basics.md](./02-wgsassign-basics.md)
+
+3.
 
 
 ## Related resources

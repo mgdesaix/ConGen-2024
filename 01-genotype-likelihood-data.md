@@ -103,9 +103,9 @@ Also, because Beagle files are large they are typically gzipped. Let’s
 check out another Beagle file in the `./data/` directory
 
 ``` sh
-# zcat ./data/amre.western.beagle.gz | wc -l
+# zcat ./data/western/amre.western.beagle.gz | wc -l
 # Macs don't 'zcat' the same as on Linux, on a Mac I use the command below
-zcat < ./data/amre.western.beagle.gz | wc -l
+zcat < ./data/western/amre.western.beagle.gz | wc -l
 ```
 
     ##   100000

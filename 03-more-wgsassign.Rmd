@@ -1,0 +1,14 @@
+---
+title: "WGSassign basics"
+author: "Matt DeSaix"
+date: "2024-08-21"
+output: rmarkdown::github_document
+---
+
+## Introduction to WGSassign
+
+### Leave-one-out Assignment
+
+
+
+

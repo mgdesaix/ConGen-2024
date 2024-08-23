@@ -8,12 +8,12 @@ Matt DeSaix
 ### Leave-one-out Assignment
 
 Let’s start using `WGSassign` with a subset of American Redstart data (a
-Neotropical migratory songbird), stored with the prefix
-`amre.western.*`. This dataset has 47 individuals from two populations
-on the Western portion of the breeding ground. These data are published
-in <https://doi.org/10.1111/mec.17137>, and Figure 1 of the paper shows
-the population structure. We have a `.beagle.gz` file and a
-tab-delimited text file (`.wgsassign.ids.txt`) with two columns:
+Neotropical migratory songbird), stored with the prefix `amre.western.*`
+(directory `./data/western/`. This dataset has 47 individuals from two
+populations on the Western portion of the breeding ground. These data
+are published in <https://doi.org/10.1111/mec.17137>, and Figure 1 of
+the paper shows the population structure. We have a `.beagle.gz` file
+and a tab-delimited text file (`.wgsassign.ids.txt`) with two columns:
 individual and population IDs (BR = Basin Rockies; WB = Western Boreal).
 The pairwise Fst between these populations is around `0.006`…let’s see
 how well we can assign these individuals back to their population!
@@ -34,8 +34,8 @@ and perform leave-one-out cross-validation (`--loo`):
 ``` sh
 conda activate WGSassign
 # change file paths as needed
-beagle=./data/amre.western.beagle.gz
-popIDs=./data/amre.western.wgsassign.ids.txt
+beagle=./data/western/amre.western.beagle.gz
+popIDs=./data/western/amre.western.wgsassign.ids.txt
 outdir=./out/western
 mkdir -p ${outdir}
 out=${outdir}/amre.western.reference
@@ -80,7 +80,7 @@ assignment (`*.pop_like_LOO.txt`):
 ``` r
 library(tidyverse)
 # read in initial IDs file for individuals
-western.ids <- read_table2("./data/amre.western.wgsassign.ids.txt",
+western.ids <- read_table2("./data/western/amre.western.wgsassign.ids.txt",
                           col_names = c("Sample", "Breeding_pop"))
 # read in wgsassign output
 # population names
@@ -256,33 +256,51 @@ reference population ID file (i.e. tab-delimited, no header, first
 column = individual ID, second column = population ID)
 
 ``` r
-write_delim(balanced.western.ids, "./data/balanced.western.wgsassign.ids.txt", delim = "\t", col_names = FALSE)
+write_delim(balanced.western.ids, "./data/western/balanced.western.wgsassign.ids.txt", delim = "\t", col_names = FALSE)
 ```
 
 Next we need to subset the Beagle file to these individuals. I provide a
-Bash script that uses `awk` to do this (`cut-beagle-ind.awk` in the
-scripts directory) - it takes as input:
+Bash script that uses `awk` to do this (`subset-beagle-ind.sh` in the
+`./data/scripts/` directory) - it takes as input the following required
+arguments
 
-1.  single column file of individual IDs to be kept
-2.  *unzipped* Beagle file
+`-i` single column file of individual IDs to be kept `-b` Beagle file
+`-o` outname of new Beagle file
 
-You made need to give yourself executable authorization for the script,
-which can be run on the Terminal:
+------------------------------------------------------------------------
+
+*Note:* You made need to give yourself executable authorization for the
+script, which can be run on the Terminal on the ConGen server:
 
 ``` sh
-chmod +x ./data/cut-beagle-ind.awk
+chmod +x ./data/scripts/subset-beagle-ind.sh
 ```
+
+Also, on my Mac, I sometimes get errors related to process substitution
+not occurring properly. This doesn’t occur for me though on the Linux
+servers I’ve used, but this code uses process substitution and locally
+on my Mac I have to set:
+
+``` sh
+set +o posix
+```
+
+For now too, I’ve also added “Mac” versions of the scripts for running
+these locally.
+
+------------------------------------------------------------------------
 
 Using the balanced western IDs file we created above, we can then subset
 the full Beagle file. The code below cuts the first column from the
 `balanced.western.wgsassign.ids.txt` to input the individuals we want to
-the script, followed by providing the Beagle file (and de-compressing
-it)
+the script, followed by providing the Beagle file
 
 ``` sh
-./scripts/cut-beagle-ind.awk <(cut -f1 ./data/balanced.western.wgsassign.ids.txt) \
-<(zcat < ./data/amre.western.beagle.gz) | \
-gzip > ./data/balanced.western.beagle.gz
+individuals=./data/western/balanced.western.wgsassign.ids.txt
+beagle=./data/western/amre.western.beagle.gz
+outname=./data/western/balanced.western.beagle.gz
+
+./data/scripts/subset-beagle-ind.sh -i <(cut -f1 ${individuals}) -b ${beagle} -o ${outname}
 ```
 
 Check the header of your new Beagle file, does it look proper? It
@@ -305,11 +323,12 @@ avoid assignment bias…i.e. increased assignment accuracy will be
 perceived when an individual’s genotype (likelihood) is included in the
 population it is being assigned to.
 
-Let’s look at this. Using the reference population allele frequencies
-for the American Redstarts of the West that we created from our initial
-run of WGSassign, let’s determine the assignment accuracy of these
-reference individuals with the standard test. Below we’ll specify the
-Beagle file (same as before) and the allele frequency file (created
+Let’s look at this and see how much we bias our results by *not* doing
+LOO on the reference individuals. Using the reference population allele
+frequencies for the American Redstarts of the West that we created from
+our initial run of WGSassign, let’s determine the assignment accuracy of
+these reference individuals with the standard test. Below we’ll specify
+the Beagle file (same as before) and the allele frequency file (created
 previously), along with the `--get_pop_like` argument to get the
 likelihood of assignment from the standard assignment (in contrast to
 `--loo` which we used before). We’ll change the output name to the
@@ -328,7 +347,7 @@ here.
 
 ``` sh
 # change file paths as needed
-beagle=./data/amre.western.beagle.gz
+beagle=./data/western/amre.western.beagle.gz
 af=./out/western/amre.western.reference.pop_af.npy
 outdir=./out/western
 out=${outdir}/amre.western.assign
@@ -419,8 +438,8 @@ data set. In groups, you will
     individuals
 
 2.  Write a new `*.wgsassign.ids.txt` file for these individuals and use
-    the `cut-beagle-ind.awk` script to create a new Beagle file of your
-    “LOO reference” individuals.
+    the `subset-beagle-ind.sh` script to create a new Beagle file of
+    your “LOO reference” individuals.
 
 3.  Perform LOO assignment in WGSassign on the new “LOO reference”
     Beagle file and calculate the effective sample sizes
@@ -445,11 +464,12 @@ data set. In groups, you will
 
 The files you’ll need for this are:
 
-- `amre.western.beagle.gz`
-- `amre.western.wgsassign.ids.txt`
-- `full.amre.beagle.meta.csv`
+- `./data/western/amre.western.beagle.gz`
+- `./data/western/amre.western.wgsassign.ids.txt`
+- `./data/scripts/subset-beagle-ind.sh`
+- `./data/full.amre.beagle.meta.csv`
 
-The first two files we have already worked with. The new “meta data”
+The first three files we have already worked with. The new “meta data”
 file provides sampling site names (column = `Site`) for the individuals.
 
 The purpose of this file is that the samples we have in our small data
