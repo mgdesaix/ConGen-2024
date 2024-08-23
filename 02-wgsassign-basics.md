@@ -3,7 +3,7 @@ WGSassign basics
 Matt DeSaix
 2024-08-21
 
-## Introduction to WGSassign
+## Known population origin individuals
 
 ### Leave-one-out Assignment
 

@@ -5,7 +5,7 @@ date: "2024-08-21"
 output: rmarkdown::github_document
 ---
 
-## Introduction to WGSassign
+## Known population origin individuals
 
 ### Leave-one-out Assignment
 
